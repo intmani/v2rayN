@@ -53,6 +53,7 @@ public class MainWindowViewModel : MyReactiveObject
     public ReactiveCommand<Unit, Unit> RegionalPresetIranCmd { get; }
 
     public ReactiveCommand<Unit, Unit> ReloadCmd { get; }
+    public ReactiveCommand<Unit, Unit> DisconnectCmd { get; }
 
     [Reactive]
     public bool BlReloadEnabled { get; set; }
@@ -212,6 +213,16 @@ public class MainWindowViewModel : MyReactiveObject
         ReloadCmd = ReactiveCommand.CreateFromTask(async () =>
         {
             await Reload();
+        });
+        DisconnectCmd = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await CoreManager.Instance.CoreStop();
+            if (_config.TunModeItem.EnableTun)
+            {
+                _config.TunModeItem.EnableTun = false;
+                await ConfigHandler.SaveConfig(_config);
+            }
+            NoticeManager.Instance.SendMessage(ResUI.OperationSuccess);
         });
 
         RegionalPresetDefaultCmd = ReactiveCommand.CreateFromTask(async () =>

@@ -126,6 +126,11 @@
                             Header="{x:Static resx:ResUI.menuSetDefaultServer}"
                             InputGestureText="Enter" />
                         <MenuItem
+                            x:Name="menuProfileDisconnect"
+                            Height="{StaticResource MenuItemHeight}"
+                            Header="Deactivate"
+                            InputGestureText="Ctrl+Shift+D" />
+                        <MenuItem
                             x:Name="menuEditServer"
                             Height="{StaticResource MenuItemHeight}"
                             Header="{x:Static resx:ResUI.menuEditServer}"

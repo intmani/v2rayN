@@ -12,7 +12,7 @@ MIN_KERNEL="5.10"
 PKGROOT="v2rayN-publish"
 PROJECT_HINT="v2rayN.Desktop/v2rayN.Desktop.csproj"
 OUTPUT_DIR="${HOME}/debbuild"
-DOTNET_TFM="net10.0"
+DOTNET_TFM="net9.0"
 DOTNET_LOONGARCH_VERSION="10.0.109"
 DOTNET_LOONGARCH_TAG="v10.0.109-loongarch64"
 DOTNET_LOONGARCH_BASE="https://github.com/loongson/dotnet/releases/download"
@@ -502,7 +502,7 @@ publish_binary() {
   local rid="$1"
 
   dotnet clean "$PROJECT" -c Release
-  rm -rf "$(dirname "$PROJECT")/bin/Release/net10.0" || true
+  rm -rf "$(dirname "$PROJECT")/bin/Release/net9.0" || true
   dotnet restore "$PROJECT"
   dotnet publish "$PROJECT" -c Release -r "$rid" -p:PublishSingleFile=false -p:SelfContained=true
 }
@@ -589,7 +589,7 @@ package_binary() {
   local sys_usrlibdir=""
   local deb_out=""
 
-  pubdir="$(dirname "$PROJECT")/bin/Release/net10.0/${rid}/publish"
+  pubdir="$(dirname "$PROJECT")/bin/Release/net9.0/${rid}/publish"
   [[ -d "$pubdir" ]] || { echo "Publish directory not found: $pubdir"; return 1; }
 
   workdir="$(mktemp -d)"

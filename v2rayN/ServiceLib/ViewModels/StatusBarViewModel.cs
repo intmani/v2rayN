@@ -30,6 +30,7 @@ public class StatusBarViewModel : MyReactiveObject
     public ReactiveCommand<Unit, Unit> NotifyLeftClickCmd { get; }
     public ReactiveCommand<Unit, Unit> ShowWindowCmd { get; }
     public ReactiveCommand<Unit, Unit> HideWindowCmd { get; }
+    public ReactiveCommand<Unit, Unit> DisconnectCmd { get; }
 
     #region System Proxy
 
@@ -152,6 +153,17 @@ public class StatusBarViewModel : MyReactiveObject
         {
             AppEvents.ShowHideWindowRequested.Publish(false);
             await Task.CompletedTask;
+        });
+        DisconnectCmd = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await CoreManager.Instance.CoreStop();
+            if (_config.TunModeItem.EnableTun)
+            {
+                _config.TunModeItem.EnableTun = false;
+                await ConfigHandler.SaveConfig(_config);
+                RxSchedulers.MainThreadScheduler.Schedule(() => EnableTun = false);
+            }
+            NoticeManager.Instance.SendMessage(ResUI.OperationSuccess);
         });
 
         AddServerViaClipboardCmd = ReactiveCommand.CreateFromTask(async () =>

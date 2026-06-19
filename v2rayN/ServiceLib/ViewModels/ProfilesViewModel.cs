@@ -43,6 +43,7 @@ public class ProfilesViewModel : MyReactiveObject
     public ReactiveCommand<Unit, Unit> RemoveDuplicateServerCmd { get; }
     public ReactiveCommand<Unit, Unit> CopyServerCmd { get; }
     public ReactiveCommand<Unit, Unit> SetDefaultServerCmd { get; }
+    public ReactiveCommand<Unit, Unit> DisconnectCmd { get; }
     public ReactiveCommand<Unit, Unit> ShareServerCmd { get; }
     public ReactiveCommand<Unit, Unit> GenGroupAllServerCmd { get; }
     public ReactiveCommand<Unit, Unit> GenGroupRegionServerCmd { get; }
@@ -128,6 +129,21 @@ public class ProfilesViewModel : MyReactiveObject
         {
             await SetDefaultServer();
         }, canEditRemove);
+        var canDisconnect = this.WhenAnyValue(
+            x => x.SelectedProfile)
+            .Select(_ => AppManager.Instance.IsRunningCore(ECoreType.Xray)
+                     || AppManager.Instance.IsRunningCore(ECoreType.sing_box));
+
+        DisconnectCmd = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await CoreManager.Instance.CoreStop();
+            if (_config.TunModeItem.EnableTun)
+            {
+                _config.TunModeItem.EnableTun = false;
+                await ConfigHandler.SaveConfig(_config);
+            }
+            NoticeManager.Instance.SendMessage(ResUI.OperationSuccess);
+        }, canDisconnect);
         ShareServerCmd = ReactiveCommand.CreateFromTask(async () =>
         {
             await ShareServerAsync();
@@ -584,10 +600,22 @@ public class ProfilesViewModel : MyReactiveObject
         {
             return;
         }
+
+        var isRunning = AppManager.Instance.IsRunningCore(ECoreType.Xray)
+                     || AppManager.Instance.IsRunningCore(ECoreType.sing_box);
+
+        // If core is stopped and this server is already the active one, just reload
+        if (!isRunning && indexId == _config.IndexId)
+        {
+            Reload();
+            return;
+        }
+
         if (indexId == _config.IndexId)
         {
             return;
         }
+
         var item = await AppManager.Instance.GetProfileItem(indexId);
         if (item is null)
         {

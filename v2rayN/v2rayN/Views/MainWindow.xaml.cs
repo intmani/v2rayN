@@ -103,6 +103,7 @@ public partial class MainWindow
             this.BindCommand(ViewModel, vm => vm.RegionalPresetIranCmd, v => v.menuRegionalPresetsIran).DisposeWith(disposables);
 
             this.BindCommand(ViewModel, vm => vm.ReloadCmd, v => v.menuReload).DisposeWith(disposables);
+            this.BindCommand(ViewModel, vm => vm.DisconnectCmd, v => v.btnDisconnect).DisposeWith(disposables);
             this.OneWayBind(ViewModel, vm => vm.BlReloadEnabled, v => v.menuReload.IsEnabled).DisposeWith(disposables);
 
             this.OneWayBind(ViewModel, vm => vm.BlNewUpdate, v => v.btnNewUpdate.Visibility).DisposeWith(disposables);
@@ -301,6 +302,13 @@ public partial class MainWindow
 
                 case Key.S:
                     ScanScreenTaskAsync().ContinueWith(_ => { });
+                    break;
+
+                case Key.D:
+                    if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                    {
+                        ViewModel?.DisconnectCmd.Execute().Subscribe();
+                    }
                     break;
             }
         }

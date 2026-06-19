@@ -224,6 +224,10 @@
                         x:Name="menuCopyProxyCmdToClipboard"
                         Height="{StaticResource MenuItemHeight}"
                         Header="{x:Static resx:ResUI.menuCopyProxyCmdToClipboard}" />
+                    <MenuItem
+                        x:Name="menuDisconnect"
+                        Height="{StaticResource MenuItemHeight}"
+                        Header="Deactivate" />
                     <Separator />
                     <MenuItem
                         x:Name="menuExit"
