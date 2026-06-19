@@ -54,6 +54,7 @@ public partial class ProfilesView
             this.BindCommand(ViewModel, vm => vm.RemoveDuplicateServerCmd, v => v.menuRemoveDuplicateServer).DisposeWith(disposables);
             this.BindCommand(ViewModel, vm => vm.CopyServerCmd, v => v.menuCopyServer).DisposeWith(disposables);
             this.BindCommand(ViewModel, vm => vm.SetDefaultServerCmd, v => v.menuSetDefaultServer).DisposeWith(disposables);
+            this.BindCommand(ViewModel, vm => vm.DisconnectCmd, v => v.menuProfileDisconnect).DisposeWith(disposables);
             this.BindCommand(ViewModel, vm => vm.ShareServerCmd, v => v.menuShareServer).DisposeWith(disposables);
             this.BindCommand(ViewModel, vm => vm.GenGroupAllServerCmd, v => v.menuGenGroupAllServer).DisposeWith(disposables);
             this.BindCommand(ViewModel, vm => vm.GenGroupRegionServerCmd, v => v.menuGenGroupRegionServer).DisposeWith(disposables);
@@ -264,7 +265,14 @@ public partial class ProfilesView
                     break;
 
                 case Key.D:
-                    ViewModel?.EditServerAsync();
+                    if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                    {
+                        ViewModel?.DisconnectCmd.Execute().Subscribe();
+                    }
+                    else
+                    {
+                        ViewModel?.EditServerAsync();
+                    }
                     break;
 
                 case Key.F:
